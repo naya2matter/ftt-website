@@ -1,27 +1,55 @@
 import { create } from "zustand";
 
+type User = {
+  name?: string;
+  email?: string;
+  avatar?: string;
+};
+
 type AuthState = {
   token: string | null;
-  user: { id: string; email: string; role: string } | null;
+  user: User | null;
   isAuthenticated: boolean;
-  login: (token: string, user: any) => void;
+  login: (token: string, user: User) => void;
   logout: () => void;
 };
 
-export const useAuthStore = create<AuthState>((set) => ({
-  token: typeof window !== "undefined"
-    ? localStorage.getItem("cms_token")
-    : null,
-  user: null,
-  isAuthenticated: false,
+export const useAuthStore = create<AuthState>((set) => {
+  let token: string | null = null;
+  let user: User | null = null;
 
-  login: (token, user) => {
-    localStorage.setItem("cms_token", token);
-    set({ token, user, isAuthenticated: true });
-  },
+  if (typeof window !== "undefined") {
+    token = localStorage.getItem("cms_token");
 
-  logout: () => {
-    localStorage.removeItem("cms_token");
-    set({ token: null, user: null, isAuthenticated: false });
-  },
-}));
+    const rawUser = localStorage.getItem("cms_user");
+    user = rawUser ? JSON.parse(rawUser) : null;
+  }
+
+  return {
+    token,
+    user,
+    isAuthenticated: !!token,
+
+    login: (token, user) => {
+      localStorage.setItem("cms_token", token);
+      localStorage.setItem("cms_user", JSON.stringify(user));
+
+      set({
+        token,
+        user,
+        isAuthenticated: true,
+      });
+    },
+
+    logout: () => {
+      localStorage.removeItem("cms_token");
+      localStorage.removeItem("cms_user");
+
+      set({
+        token: null,
+        user: null,
+        isAuthenticated: false,
+      });
+    },
+  };
+});
