@@ -19,7 +19,8 @@ export default function GalleryPage() {
       <main className="flex-1 w-full pt-20">
         <GalleryHeroSection />
         <GalleryGridSection />
-        <GalleryActionBarSection />
+        {/* <GalleryActionBarSection /> */}
+
       </main>
       <Footer />
     </div>
