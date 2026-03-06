@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import SectionContainer from "@/app/components/layout/SectionContainer";
+import type { HomeWhyUsSection } from "@/lib/services/home.types";
 
 const titleVariants = {
   hidden: { opacity: 0, x: -100 },
@@ -60,44 +61,22 @@ const iconVariants = {
   },
 };
 
-export default function WhyFTTHeroSection() {
-  const features = [
-    {
-      icon: "payments",
-      text: "Performance-based pay, earn more by driving safely and smartly",
-    },
-    {
-      icon: "local_shipping",
-      text: "New Amazon-branded equipment",
-    },
-    {
-      icon: "package",
-      text: "100% no-touch freight",
-    },
-    {
-      icon: "route",
-      text: "Dedicated lanes and consistent schedules",
-    },
-    {
-      icon: "support_agent",
-      text: "Supportive coaching during onboarding and beyond",
-    },
-    {
-      icon: "diversity_3",
-      text: "Equal opportunity employer committed to inclusion",
-    },
-    {
-      icon: "home",
-      text: "Be home every other day on single-shift schedules",
-    },
-    {
-      icon: "payments",
-      text: "Probation Period & Sign-On Bonus",
-    },
-  ];
+export default function WhyFTTHeroSection({ data }: { data?: HomeWhyUsSection }) {
+  const features = data?.items && data.items.length > 0
+    ? data.items
+    : [
+        { icon: "payments", name: "Performance-based pay, earn more by driving safely and smartly" },
+        { icon: "local_shipping", name: "New Amazon-branded equipment" },
+        { icon: "package", name: "100% no-touch freight" },
+        { icon: "route", name: "Dedicated lanes and consistent schedules" },
+        { icon: "support_agent", name: "Supportive coaching during onboarding and beyond" },
+        { icon: "diversity_3", name: "Equal opportunity employer committed to inclusion" },
+        { icon: "home", name: "Be home every other day on single-shift schedules" },
+        { icon: "payments", name: "Probation Period & Sign-On Bonus" },
+      ];
 
   return (
-    <section className="relative w-full bg-[#E8E8E0] dark:bg-slate-900  mt-5">
+    <section className="relative w-full overflow-hidden bg-[#E8E8E0] dark:bg-slate-900  mt-5">
       <SectionContainer size="xl" noPaddingY>
       <div className="space-y-12">
         <div className="text-center space-y-4">
@@ -114,7 +93,7 @@ export default function WhyFTTHeroSection() {
             className="w-24 h-1.5 bg-primary mx-auto rounded-full"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once:true, margin:"-100px"}}
             variants={dividerVariants}
           ></motion.div>
         </div>
@@ -142,12 +121,21 @@ export default function WhyFTTHeroSection() {
                 viewport={{ once: true, margin: "-50px" }}
                 variants={iconVariants}
               >
-                <span className="material-symbols-outlined text-3xl">
-                  {feature.icon}
-                </span>
+                {feature.icon.startsWith("http") || feature.icon.startsWith("/") ? (
+                  <img
+                    src={feature.icon}
+                    alt={feature.name}
+                    className="w-8 h-8 object-contain"
+                    onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                ) : (
+                  <span className="material-symbols-outlined text-3xl">
+                    {feature.icon}
+                  </span>
+                )}
               </motion.div>
               <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
-                {feature.text}
+                {feature.name}
               </p>
               <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
             </motion.div>

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import SectionContainer from "@/app/components/layout/SectionContainer";
 import Link from "next/link";
+import type { HomeCTA } from "@/lib/services/home.types";
 
 const containerVariants = {
   hidden: { opacity: 0, scale: 0.9 },
@@ -66,7 +67,7 @@ const badgeVariants = {
   }),
 };
 
-export default function BenefitsCTASection() {
+export default function BenefitsCTASection({ cta }: { cta?: HomeCTA }) {
   return (
     <section className="relative w-full bg-[#E8E8E0] dark:bg-slate-900 py-12 sm:py-16 md:py-20 lg:pt-50">
       <SectionContainer size="xl" noPaddingY>
@@ -81,14 +82,13 @@ export default function BenefitsCTASection() {
             className="text-slate-900 dark:text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-3 sm:mb-4 md:mb-6"
             variants={itemVariants}
           >
-            Ready to Join the First Team?
+            {cta?.title ?? "Ready to Join the First Team?"}
           </motion.h2>
           <motion.p
             className="text-slate-600 dark:text-slate-400 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 md:mb-10"
             variants={itemVariants}
           >
-            Applications take less than 10 minutes. Our recruitment team will
-            review your profile and reach out within 24-48 hours.
+            {cta?.description ?? "Applications take less than 10 minutes. Our recruitment team will review your profile and reach out within 24-48 hours."}
           </motion.p>
           <motion.div
             className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
@@ -101,10 +101,10 @@ export default function BenefitsCTASection() {
               whileTap={{ scale: 0.95 }}
             >
               <Link
-                href="/apply-now"
+                href={cta?.button1_link ?? "/apply-now"}
                 className="flex items-center justify-center gap-2"
               >
-                APPLY NOW
+                {cta?.button1_text ?? "APPLY NOW"}
                 <span className="material-symbols-outlined">trending_flat</span>
               </Link>
             </motion.button>
@@ -117,7 +117,7 @@ export default function BenefitsCTASection() {
               <span className="material-symbols-outlined text-lg sm:text-xl">
                 call
               </span>
-              Call Recruitment
+              {cta?.button2_text ?? "Call Recruitment"}
             </motion.button>
           </motion.div>
           <motion.div

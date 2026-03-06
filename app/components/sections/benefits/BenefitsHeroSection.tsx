@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import SectionContainer from "@/app/components/layout/SectionContainer";
 import Link from "next/link";
+import type { HomeBenefitsSection } from "@/lib/services/home.types";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -92,7 +93,20 @@ const listItemVariants = {
   },
 };
 
-export default function BenefitsHeroSection() {
+export default function BenefitsHeroSection({ data }: { data?: HomeBenefitsSection }) {
+  const items = data?.items && data.items.length > 0
+    ? data.items
+    : [
+        { text: "Weekly pay with same-day pay options" },
+        { text: "Health, dental, vision & life insurance" },
+        { text: "Paid orientation & paid training" },
+        { text: "Paid virtual orientation & intermodal training" },
+        { text: "Paid time off (1 hour for every 25 hours worked)" },
+        { text: "Safety & performance bonuses" },
+        { text: "Driver referral program" },
+        { text: "Childcare Assistance" },
+      ];
+  const animDelay = (i: number) => 0.2 + i * 0.08;
   return (
     <section className="relative w-full bg-[#E8E8E0] dark:bg-slate-900 ">
       <SectionContainer
@@ -115,17 +129,23 @@ export default function BenefitsHeroSection() {
             variants={badgeVariants}
           >
             <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+            {/* Badge */}
             <span className="text-primary text-[10px] sm:text-xs font-bold uppercase tracking-wider">
-              Official Amazon Freight Partner
+              {data?.hook ?? "Official Amazon Freight Partner"}
             </span>
           </motion.div>
+          {/* Heading */}
           <motion.h1
             className="text-slate-900 dark:text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-[1.1] tracking-tight mb-4 sm:mb-5 md:mb-6"
             variants={titleVariants}
             style={{ transformPerspective: 1000 }}
           >
-            Drive with the Best:{" "}
-            <span className="text-primary">First Team Trucking</span>
+            {data?.title ?? (
+              <>
+                Drive with the Best:{" "}
+                <span className="text-primary">First Team Trucking</span>
+              </>
+            )}
           </motion.h1>
           <motion.div
             className="mb-6 sm:mb-8 md:mb-10 max-w-2xl"
@@ -138,134 +158,26 @@ export default function BenefitsHeroSection() {
               viewport={{ once: true }}
               transition={{ staggerChildren: 0.08, delayChildren: 0.1 }}
             >
-              <motion.li
-                variants={listItemVariants}
-                className="flex items-start gap-2"
-              >
-                <motion.span
-                  className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                  whileInView={{ rotate: 360, scale: [0.8, 1.2, 1] }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  viewport={{ once: true }}
+              {items.map((item, i) => (
+                <motion.li
+                  key={i}
+                  variants={listItemVariants}
+                  className="flex items-start gap-2"
                 >
-                  check_circle
-                </motion.span>
-                <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">
-                  Weekly pay with same-day pay options
-                </span>
-              </motion.li>
-              <motion.li
-                variants={listItemVariants}
-                className="flex items-start gap-2"
-              >
-                <motion.span
-                  className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                  whileInView={{ rotate: 360, scale: [0.8, 1.2, 1] }}
-                  transition={{ duration: 0.5, delay: 0.28 }}
-                  viewport={{ once: true }}
-                >
-                  check_circle
-                </motion.span>
-                <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">
-                  Health, dental, vision & life insurance
-                </span>
-              </motion.li>
-              <motion.li
-                variants={listItemVariants}
-                className="flex items-start gap-2"
-              >
-                <motion.span
-                  className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                  whileInView={{ rotate: 360, scale: [0.8, 1.2, 1] }}
-                  transition={{ duration: 0.5, delay: 0.36 }}
-                  viewport={{ once: true }}
-                >
-                  check_circle
-                </motion.span>
-                <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">
-                  Paid orientation & paid training
-                </span>
-              </motion.li>
-              <motion.li
-                variants={listItemVariants}
-                className="flex items-start gap-2"
-              >
-                <motion.span
-                  className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                  whileInView={{ rotate: 360, scale: [0.8, 1.2, 1] }}
-                  transition={{ duration: 0.5, delay: 0.44 }}
-                  viewport={{ once: true }}
-                >
-                  check_circle
-                </motion.span>
-                <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">
-                  Paid virtual orientation & intermodal training
-                </span>
-              </motion.li>
-              <motion.li
-                variants={listItemVariants}
-                className="flex items-start gap-2"
-              >
-                <motion.span
-                  className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                  whileInView={{ rotate: 360, scale: [0.8, 1.2, 1] }}
-                  transition={{ duration: 0.5, delay: 0.52 }}
-                  viewport={{ once: true }}
-                >
-                  check_circle
-                </motion.span>
-                <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">
-                  Paid time off (1 hour for every 25 hours worked)
-                </span>
-              </motion.li>
-              <motion.li
-                variants={listItemVariants}
-                className="flex items-start gap-2"
-              >
-                <motion.span
-                  className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                  whileInView={{ rotate: 360, scale: [0.8, 1.2, 1] }}
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                  viewport={{ once: true }}
-                >
-                  check_circle
-                </motion.span>
-                <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">
-                  Safety & performance bonuses
-                </span>
-              </motion.li>
-              <motion.li
-                variants={listItemVariants}
-                className="flex items-start gap-2"
-              >
-                <motion.span
-                  className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                  whileInView={{ rotate: 360, scale: [0.8, 1.2, 1] }}
-                  transition={{ duration: 0.5, delay: 0.68 }}
-                  viewport={{ once: true }}
-                >
-                  check_circle
-                </motion.span>
-                <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">
-                  Driver referral program
-                </span>
-              </motion.li>
-              <motion.li
-                variants={listItemVariants}
-                className="flex items-start gap-2"
-              >
-                <motion.span
-                  className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                  whileInView={{ rotate: 360, scale: [0.8, 1.2, 1] }}
-                  transition={{ duration: 0.5, delay: 0.76 }}
-                  viewport={{ once: true }}
-                >
-                  check_circle
-                </motion.span>
-                <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">
-                  Childcare Assistance
-                </span>
-              </motion.li>
+                  <motion.span
+                    className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
+                    whileInView={{ rotate: 360, scale: [0.8, 1.2, 1] }}
+                    transition={{ duration: 0.5, delay: animDelay(i) }}
+                    viewport={{ once: true }}
+                  >
+                    check_circle
+                  </motion.span>
+                  {/* List Item Text */}
+                  <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">
+                    {item.text}
+                  </span>
+                </motion.li>
+              ))}
             </motion.ul>
           </motion.div>
           <motion.div

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import SectionContainer from "@/app/components/layout/SectionContainer";
 import Link from "next/link";
+import type { HomeOfferSection } from "@/lib/services/home.types";
 
 const contentVariants = {
   hidden: { opacity: 0, x: -60, y: 60 },
@@ -73,9 +74,24 @@ const listItemVariants = {
   },
 };
 
-export default function BonusHeroSection() {
+export default function BonusHeroSection({ data }: { data?: HomeOfferSection }) {
+  const bgImage = data?.image ?? "https://lh3.googleusercontent.com/aida-public/AB6AXuBcUJnM-bxeszpCVoXzhFixfrT3XIh2eyuudIJt2mDZY7OhzGIv0qlzVz57CcEoh_tiLP4e2bnZ6qpSEFBbT-rifRgFmbWIvcl_Ujl-hbkHFYnBT9Wl8C2Y9m7lfhYJ4mGY3CmxajDcYW-b8VPP9Yskfh9t7tKffTdABZqASN_ol59cW_lXgp_NG0m9RmKH8snzZJt7I1BN-Qr4fBlFdwuvFje8eLFDsj2haebzdmXMzdUgamMRYX9s_y9_TI37RXhXLAUP-hJ3AQE";
+  const paragraphs = data?.description
+    ? data.description.split(/\r?\n\r?\n/).filter(Boolean)
+    : [
+        "New drivers go through a coaching and probation period designed to help you succeed. The length depends on experience and performance.",
+        "Upon successful completion, drivers are eligible for a sign-on bonus, based on:",
+      ];
+  const requirements = data?.requirements ?? [
+    { text: "Willingness to learn" },
+    { text: "On-time performance" },
+    { text: "Commitment to safety and reliability" },
+  ];
+  const buttonText = data?.button_text ?? "APPLY NOW";
+  const buttonLink = data?.button_link ?? "/apply-now";
+
   return (
-    <section className="relative w-full bg-[#E8E8E0] dark:bg-slate-900 py-10 md:py-12">
+    <section className="relative w-full overflow-hidden bg-[#E8E8E0] dark:bg-slate-900 py-10 md:py-12">
       <SectionContainer size="xl" noPaddingY>
       <div className="relative overflow-hidden rounded-3xl bg-slate-100 dark:bg-slate-800 ">
       <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
@@ -90,26 +106,32 @@ export default function BonusHeroSection() {
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider"
             variants={badgeVariants}
           >
+            {/* Badge */}
             <span className="material-symbols-outlined text-sm">stars</span>
-            Limited Time Offer
+            {data?.hook ?? "Limited Time Offer"}
           </motion.div>
+          {/* Heading */}
           <motion.h1
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-slate-900 dark:text-white"
             variants={itemVariants}
           >
-            Probation &amp;{" "}
-            <span className="text-primary tracking-tight">Sign-On Bonus</span>
+            {data?.title ?? (
+              <>
+                Probation &amp;{" "}
+                <span className="text-primary tracking-tight">Sign-On Bonus</span>
+              </>
+            )}
           </motion.h1>
           <motion.div
             className="space-y-4 max-w-lg"
             variants={itemVariants}
           >
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400">
-              New drivers go through a coaching and probation period designed to help you succeed. The length depends on experience and performance.
-            </p>
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400">
-              Upon successful completion, drivers are eligible for a sign-on bonus, based on:
-            </p>
+            {/* Paragraphs */}
+            {paragraphs.map((para, i) => (
+              <p key={i} className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400">
+                {para}
+              </p>
+            ))}
             <motion.ul 
               className="space-y-3"
               initial="hidden"
@@ -117,38 +139,24 @@ export default function BonusHeroSection() {
               viewport={{ once: true }}
               transition={{ staggerChildren: 0.15, delayChildren: 0.2 }}
             >
-              <motion.li variants={listItemVariants} className="flex items-start gap-2" style={{ transformPerspective: 1000 }}>
-                <motion.span 
-                  className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                  whileInView={{ scale: [0, 1.3, 1], rotate: [0, 180, 360] }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  viewport={{ once: true }}
-                >check_circle</motion.span>
-                <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">Willingness to learn</span>
-              </motion.li>
-              <motion.li variants={listItemVariants} className="flex items-start gap-2" style={{ transformPerspective: 1000 }}>
-                <motion.span 
-                  className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                  whileInView={{ scale: [0, 1.3, 1], rotate: [0, 180, 360] }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                  viewport={{ once: true }}
-                >check_circle</motion.span>
-                <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">On-time performance</span>
-              </motion.li>
-              <motion.li variants={listItemVariants} className="flex items-start gap-2" style={{ transformPerspective: 1000 }}>
-                <motion.span 
-                  className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                  whileInView={{ scale: [0, 1.3, 1], rotate: [0, 180, 360] }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
-                  viewport={{ once: true }}
-                >check_circle</motion.span>
-                <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">Commitment to safety and reliability</span>
-              </motion.li>
+              {requirements.map((req, i) => (
+                <motion.li key={i} variants={listItemVariants} className="flex items-start gap-2" style={{ transformPerspective: 1000 }}>
+                  <motion.span 
+                    className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
+                    whileInView={{ scale: [0, 1.3, 1], rotate: [0, 180, 360] }}
+                    transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+                    viewport={{ once: true }}
+                  >check_circle</motion.span>
+                  {/* List Item Text */}
+                  <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">{req.text}</span>
+                </motion.li>
+              ))}
             </motion.ul>
           </motion.div>
+          {/* CTA */}
           <motion.div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 pt-2 sm:pt-4" variants={itemVariants}>
-            <Link href="/apply-now" className="flex min-w-40 sm:min-w-50 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 sm:px-7 sm:py-4 md:px-8 md:py-5 text-base sm:text-lg font-black uppercase tracking-widest text-white transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(235,25,32,0.2)] dark:shadow-[0_0_30px_rgba(235,25,32,0.4)]">
-              APPLY NOW
+            <Link href={buttonLink} className="flex min-w-40 sm:min-w-50 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 sm:px-7 sm:py-4 md:px-8 md:py-5 text-base sm:text-lg font-black uppercase tracking-widest text-white transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(235,25,32,0.2)] dark:shadow-[0_0_30px_rgba(235,25,32,0.4)]">
+              {buttonText}
               <span className="material-symbols-outlined">trending_flat</span>
             </Link>
           </motion.div>
@@ -160,8 +168,7 @@ export default function BonusHeroSection() {
           viewport={{ once: true, margin: "-100px" }}
           variants={imageVariants}
           style={{
-            backgroundImage:
-              "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBcUJnM-bxeszpCVoXzhFixfrT3XIh2eyuudIJt2mDZY7OhzGIv0qlzVz57CcEoh_tiLP4e2bnZ6qpSEFBbT-rifRgFmbWIvcl_Ujl-hbkHFYnBT9Wl8C2Y9m7lfhYJ4mGY3CmxajDcYW-b8VPP9Yskfh9t7tKffTdABZqASN_ol59cW_lXgp_NG0m9RmKH8snzZJt7I1BN-Qr4fBlFdwuvFje8eLFDsj2haebzdmXMzdUgamMRYX9s_y9_TI37RXhXLAUP-hJ3AQE')",
+            backgroundImage: `url('${bgImage}')`,
           }}
         >
           <div className="absolute inset-0 bg-linear-to-r from-slate-100 dark:from-slate-800 via-transparent to-transparent lg:block hidden"></div>

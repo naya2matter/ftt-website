@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import type { HomeHeroSection } from "@/lib/services/home.types";
 import SectionContainer from "@/app/components/layout/SectionContainer";
+
+type Props = { data?: HomeHeroSection };
 
 // Animation variants for staggered content reveal
 const containerVariants = {
@@ -51,7 +54,14 @@ const statItemVariants = {
   },
 };
 
-export default function HeroSection() {
+export default function HeroSection({ data }: Props) {
+  const bgImage = data?.media?.[0]?.url ?? "/bghero.jpg";
+  const paragraphs = data?.description_html
+    ? data.description_html.split(/\r?\n\r?\n/).filter(Boolean)
+    : [
+        "First Team Trucking is a trusted Amazon Freight Partner operating dedicated regional lanes out of Indianapolis, Indiana. We specialize in safe, reliable, and professional CDL Class A transportation using Amazon-branded equipment.",
+        "Whether you're an experienced driver or just starting your career, we focus on performance, safety, and growth, not just seniority. At First Team Trucking, every driver has a real opportunity to succeed.",
+      ];
   return (
     <main className="relative flex min-h-screen w-full items-center pt-30 pb-10">
       {/* Background Image Container */}
@@ -61,7 +71,7 @@ export default function HeroSection() {
           className="h-full w-full bg-cover bg-center"
         >
           <img
-            src="/bghero.jpg"
+            src={bgImage}
             alt="Hero Background"
             className="h-full w-full object-cover object-center opacity-80"
           />
@@ -84,7 +94,7 @@ export default function HeroSection() {
           <motion.div variants={itemVariants} className="mb-6 flex items-center gap-2 ">
             <span className="h-0.5 w-12 bg-primary"></span>
             <span className="text-xs font-bold uppercase tracking-[0.3em] text-primary">
-              Amazon Freight Partner
+              {data?.subheader }
             </span>
           </motion.div>
 
@@ -93,37 +103,32 @@ export default function HeroSection() {
             variants={itemVariants}
             className="mb-6 font-sragen text-4xl font-bold leading-[110%] tracking-tight text-slate-900 dark:text-white md:text-5xl lg:text-6xl uppercase align-middle dark:drop-shadow-[0_0_20px_rgba(235,25,32,0.2)]"
           >
-            Drive with the best:
-            <br />
-            <span className="text-primary">Join First Team Trucking</span>
+            {data?.title}
           </motion.h1>
 
           {/* Description */}
-          <motion.p
+          <motion.div
             variants={itemVariants}
             className="mb-10 max-w-3xl text-base sm:text-lg md:text-xl font-medium leading-[110%] align-middle text-slate-900 dark:text-slate-300"
           >
-            <motion.span
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-            >
-              First Team Trucking is a trusted Amazon Freight Partner operating dedicated regional lanes out of Indianapolis, Indiana. We specialize in safe, reliable, and professional CDL Class A transportation using Amazon-branded equipment.
-            </motion.span>
-            <br /><br />
-            <motion.span
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 1.0 }}
-            >
-              Whether you're an experienced driver or just starting your career, we focus on performance, safety, and growth, not just seniority. At First Team Trucking, every driver has a real opportunity to succeed.
-            </motion.span>
-          </motion.p>
+            
+              <motion.p
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.8  }}
+              >
+                {paragraphs}
+              </motion.p>
+            
+          </motion.div>
 
           {/* CTA Buttons */}
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <Link href="/apply-now" className="flex min-w-40 sm:min-w-50 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 sm:px-7 sm:py-4 md:px-8 md:py-5 text-base sm:text-lg font-black uppercase tracking-widest text-white transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(235,25,32,0.2)] dark:shadow-[0_0_30px_rgba(235,25,32,0.4)]">
-              APPLY NOW
+            <Link
+              href={data?.button1_link ?? ""}
+              className="flex min-w-40 sm:min-w-50 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 sm:px-7 sm:py-4 md:px-8 md:py-5 text-base sm:text-lg font-black uppercase tracking-widest text-white transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(235,25,32,0.2)] dark:shadow-[0_0_30px_rgba(235,25,32,0.4)]"
+            >
+              {data?.button1_text }
               <span className="material-symbols-outlined">trending_flat</span>
             </Link>
           </motion.div>

@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import SectionContainer from "@/app/components/layout/SectionContainer";
 import VideoPlayer, { VideoPlayerRef } from "@/app/components/common/VideoPlayer";
+import type { HomeFounderSection } from "@/lib/services/home.types";
 
 // Animation variants for horizontal slide-in
 const textBlockVariants = {
@@ -44,9 +45,18 @@ const blobVariants = {
   },
 };
 
-export default function OwnerMessageSection() {
+export default function OwnerMessageSection({ data }: { data?: HomeFounderSection }) {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const videoPlayerRef = useRef<VideoPlayerRef>(null);
+
+  const videoSrc = data?.video?.url ?? "/Shawn.mp4";
+  const paragraphs = data?.description
+    ? data.description.split(/\r?\n\r?\n/).filter(Boolean)
+    : [
+        "At First Team Trucking, we believe drivers deserve more than just a paycheck, they deserve respect, opportunity, and a clear path to grow.",
+        "Our pay structure is built to reward your performance with predictable, consistent earnings. You'll haul Amazon freight on set lanes, meaning no guesswork and no surprises.",
+        "Whether you're new to Amazon lanes or an experienced CDL Class A driver, our team is committed to giving you the tools, training, and support you need to succeed. If you're willing to show up, stay safe, and take pride in your work, there's a place for you here.",
+      ];
 
   const handleScrollToVideo = () => {
     // Scroll to video
@@ -73,13 +83,15 @@ export default function OwnerMessageSection() {
             viewport={{ once: true, margin: "-100px" }}
             variants={textBlockVariants}
           >
+            {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 w-fit">
               <span className="text-primary text-xs font-bold tracking-widest uppercase">
-                Meet Our Founder
+                {data?.hook_text ?? "Meet Our Founder"}
               </span>
             </div>
+            {/* Heading */}
             <h2 className="text-slate-900 dark:text-white text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">
-              A Message from the Owner: 
+              {data?.title ?? "A Message from the Owner:"}
             </h2>
             <motion.div 
               className="space-y-4"
@@ -88,36 +100,20 @@ export default function OwnerMessageSection() {
               viewport={{ once: true }}
               transition={{ staggerChildren: 0.2, delayChildren: 0.3 }}
             >
-              <motion.p 
-                className="text-slate-600 dark:text-white/90 text-base sm:text-lg font-normal leading-relaxed"
-                initial={{ opacity: 0, y: 20, rotateX: -15 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                style={{ transformPerspective: 1000 }}
-              >
-                At First Team Trucking, we believe drivers deserve more than just a paycheck, they deserve respect, opportunity, and a clear path to grow.
-              </motion.p>
-              <motion.p 
-                className="text-slate-600 dark:text-white/90 text-base sm:text-lg font-normal leading-relaxed"
-                initial={{ opacity: 0, y: 20, rotateX: -15 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                style={{ transformPerspective: 1000 }}
-              >
-                Our pay structure is built to reward your performance with predictable, consistent earnings. You'll haul Amazon freight on set lanes, meaning no guesswork and no surprises.
-              </motion.p>
-              <motion.p 
-                className="text-slate-600 dark:text-white/90 text-base sm:text-lg font-normal leading-relaxed"
-                initial={{ opacity: 0, y: 20, rotateX: -15 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-                style={{ transformPerspective: 1000 }}
-              >
-                Whether you're new to Amazon lanes or an experienced CDL Class A driver, our team is committed to giving you the tools, training, and support you need to succeed. If you're willing to show up, stay safe, and take pride in your work, there's a place for you here.
-              </motion.p>
+              {/* Paragraphs */}
+              {paragraphs.map((para, i) => (
+                <motion.p
+                  key={i}
+                  className="text-slate-600 dark:text-white/90 text-base sm:text-lg font-normal leading-relaxed"
+                  initial={{ opacity: 0, y: 20, rotateX: -15 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.3 + i * 0.2 }}
+                  style={{ transformPerspective: 1000 }}
+                >
+                  {para}
+                </motion.p>
+              ))}
             </motion.div>
             <div className="pt-4">
               <button
@@ -156,7 +152,7 @@ export default function OwnerMessageSection() {
             {/* Video Container */}
             <VideoPlayer
               ref={videoPlayerRef}
-              videoSrc="/Shawn.mp4"
+              videoSrc={videoSrc}
               title="A Message from Shawn, Owner"
               showControls={true}
               onPlayStateChange={setIsVideoPlaying}

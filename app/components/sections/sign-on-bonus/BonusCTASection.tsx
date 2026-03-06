@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import SectionContainer from "@/app/components/layout/SectionContainer";
 import Link from "next/link";
+import type { HomeCTA } from "@/lib/services/home.types";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -55,7 +56,7 @@ const buttonVariants = {
   },
 };
 
-export default function BonusCTASection() {
+export default function BonusCTASection({ cta }: { cta?: HomeCTA }) {
   return (
     <section className="relative w-full bg-[#E8E8E0] dark:bg-slate-900 py-10 sm:py-12 md:py-14 lg:py-16">
       <SectionContainer size="xl" noPaddingY>
@@ -70,17 +71,18 @@ export default function BonusCTASection() {
             className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white px-4 sm:px-6 lg:px-8 xl:px-0"
             variants={dropVariants}
           >
-            Ready to join the{" "}
-            <span className="text-primary tracking-tight">
-              First Team Trucking?
-            </span>
+            {cta?.title ?? (
+              <>
+                Ready to join the{" "}
+                <span className="text-primary tracking-tight">First Team Trucking?</span>
+              </>
+            )}
           </motion.h2>
           <motion.p
             className="text-slate-600 dark:text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-0"
             variants={dropVariants}
           >
-            Applications are processed within 48 hours. Start your journey
-            towards a stable career with competitive rewards today.
+            {cta?.description ?? "Applications are processed within 48 hours. Start your journey towards a stable career with competitive rewards today."}
           </motion.p>
           <motion.div
             className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4 sm:px-6 lg:px-8 xl:px-0"
@@ -93,11 +95,10 @@ export default function BonusCTASection() {
               whileTap={{ scale: 0.95 }}
             >
               <Link
-                href="/apply-now"
+                href={cta?.button1_link ?? "/apply-now"}
                 className="flex items-center justify-center gap-2"
-                
               >
-                APPLY NOW
+                {cta?.button1_text ?? "APPLY NOW"}
                 <span className="material-symbols-outlined">trending_flat</span>
               </Link>
             </motion.button>
@@ -108,11 +109,10 @@ export default function BonusCTASection() {
               whileTap={{ scale: 0.95 }}
             >
               <Link
-                href="+18005551234"
+                href={cta?.button2_link ?? "#"}
                 className="flex items-center justify-center gap-2"
-                
               >
-                Contact Us
+                {cta?.button2_text ?? "Contact Us"}
                 <span className="material-symbols-outlined">call</span>
               </Link>
             </motion.button>

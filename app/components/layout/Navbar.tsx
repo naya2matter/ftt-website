@@ -7,8 +7,20 @@ import { usePathname, useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+
+  // Fetch CMS logo
+  useEffect(() => {
+    fetch("/api/home")
+      .then((r) => r.json())
+      .then((json) => {
+        const logo = json?.data?.original?.data?.site_metadata?.logo;
+        if (logo) setLogoUrl(logo);
+      })
+      .catch(() => {});
+  }, []);
 
   // Handle hash scrolling on page load
   useEffect(() => {
@@ -70,22 +82,34 @@ export default function Navbar() {
           whileHover={{ scale: 1.02 }}
           transition={{ duration: 0.2 }}
         >
-          {/* Light mode logo */}
-          <Image
-            src="/FTT-Logo.png"
-            alt="First Team Trucking Logo"
-            width={64}
-            height={64}
-            className="w-14 sm:w-16 dark:hidden"
-          />
-          {/* Dark mode logo */}
-          <Image
-            src="/FFT-Logo-white.png"
-            alt="First Team Trucking Logo"
-            width={64}
-            height={64}
-            className="w-14 sm:w-16 hidden dark:block"
-          />
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              alt="First Team Trucking Logo"
+              width={64}
+              height={64}
+              className="w-14 sm:w-16"
+            />
+          ) : (
+            <>
+              {/* Light mode fallback */}
+              <Image
+                src="/FTT-Logo.png"
+                alt="First Team Trucking Logo"
+                width={64}
+                height={64}
+                className="w-14 sm:w-16 dark:hidden"
+              />
+              {/* Dark mode fallback */}
+              <Image
+                src="/FFT-Logo-white.png"
+                alt="First Team Trucking Logo"
+                width={64}
+                height={64}
+                className="w-14 sm:w-16 hidden dark:block"
+              />
+            </>
+          )}
 
         </motion.a>
 
