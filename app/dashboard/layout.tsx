@@ -1,15 +1,52 @@
 "use client";
 
 import "./dashboard.css";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Poppins } from "next/font/google";
 import { AppSidebar } from "./components/app-sidebar";
 import { SiteHeader } from "./components/site-header";
 import { SidebarProvider } from "./components/ui/sidebar";
+import { useAuthStore } from "./stores/auth.store";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const router = useRouter();
+  const { isAuthenticated } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    // Check if user has a token in localStorage
+    const token = localStorage.getItem("cms_token");
+    if (!token && !isAuthenticated) {
+      // Redirect to login if no token
+      router.replace("/login");
+    }
+  }, [mounted, isAuthenticated, router]);
+
+  // Always return null until client mount to avoid SSR/CSR hydration mismatch
+  if (!mounted) {
+    return null;
+  }
+
+  const token = localStorage.getItem("cms_token");
+  if (!token && !isAuthenticated) {
+    return null;
+  }
+
   return (
     <SidebarProvider
       style={
@@ -20,7 +57,7 @@ export default function DashboardLayout({
       }
     >
       <AppSidebar />
-      <main style={{ fontFamily: 'var(--font-display)' }} className="relative flex min-h-svh flex-1 flex-col bg-background">
+      <main className={`${poppins.className} relative flex min-h-svh flex-1 flex-col bg-background`}>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">

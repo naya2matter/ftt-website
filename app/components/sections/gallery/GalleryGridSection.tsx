@@ -2,8 +2,13 @@
 
 import SectionContainer from '@/app/components/layout/SectionContainer';
 import GalleryGrid from '@/app/components/common/GalleryGrid';
+import type { GalleryImage, GallerySection } from '@/lib/services/gallery.types';
 
-const galleryItems = [
+interface GalleryGridSectionProps {
+  data?: GallerySection | null;
+}
+
+const fallbackItems = [
   {
     title: "Our Modern Fleet",
     description: "State-of-the-art Amazon Prime branded cabs.",
@@ -48,11 +53,20 @@ const galleryItems = [
   },
 ];
 
-export default function GalleryGridSection() {
+export default function GalleryGridSection({ data }: GalleryGridSectionProps) {
+  const items: { title: string; description: string; image: string }[] =
+    data?.images && data.images.length > 0
+      ? data.images.map((img: GalleryImage) => ({
+          title: img.title,
+          description: img.description,
+          image: img.image_url,
+        }))
+      : fallbackItems;
+
   return (
     <section className="relative w-full bg-[#E8E8E0] dark:bg-slate-900 py-12 md:py-16">
       <SectionContainer size="xl" noPaddingY>
-      <GalleryGrid items={galleryItems} shuffle={true} />
+      <GalleryGrid items={items} shuffle={true} />
       </SectionContainer>
     </section>
   );
