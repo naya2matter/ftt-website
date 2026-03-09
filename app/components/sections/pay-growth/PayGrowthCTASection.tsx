@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import SectionContainer from "@/app/components/layout/SectionContainer";
 import Link from "next/link";
+import type { HomeCTA } from "@/lib/services/home.types";
 
 const containerVariants = {
   hidden: { opacity: 0, scale: 0.8 },
@@ -44,7 +45,7 @@ const backgroundVariants = {
   },
 };
 
-export default function PayGrowthCTASection() {
+export default function PayGrowthCTASection({ cta }: { cta?: HomeCTA }) {
   return (
     <section className="relative w-full bg-[#E8E8E0] dark:bg-slate-900 py-12 sm:py-16 md:py-20 rounded-3xl">
       <SectionContainer size="xl" noPaddingY className="relative overflow-hidden rounded-3xl p-8">
@@ -65,17 +66,20 @@ export default function PayGrowthCTASection() {
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-slate-900 dark:text-white uppercase mb-4 sm:mb-5 md:mb-6 leading-tight font-black tracking-tight"
           variants={itemVariants}
         >
-          Ready to drive for a team that{" "}
-          <span className="text-primary underline decoration-primary/30">
-            values your excellence?
-          </span>
+          {cta?.title ?? (
+            <>
+              Ready to drive for a team that{" "}
+              <span className="text-primary underline decoration-primary/30">
+                values your excellence?
+              </span>
+            </>
+          )}
         </motion.h2>
         <motion.p
           className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-gray-400 mb-8 sm:mb-9 md:mb-10"
           variants={itemVariants}
         >
-          Join First Team Trucking today and start your journey toward top-tier
-          performance rewards.
+          {cta?.description ?? "Join First Team Trucking today and start your journey toward top-tier performance rewards."}
         </motion.p>
         <motion.div
           className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center"
@@ -87,11 +91,10 @@ export default function PayGrowthCTASection() {
             whileTap={{ scale: 0.95 }}
           >
             <Link
-                href="/apply-now"
+                href={cta?.button1_link ?? "/apply-now"}
                 className="flex items-center justify-center gap-2"
-                
               >
-                APPLY NOW
+                {cta?.button1_text ?? "APPLY NOW"}
                 <span className="material-symbols-outlined">trending_flat</span>
               </Link>
           </motion.button>

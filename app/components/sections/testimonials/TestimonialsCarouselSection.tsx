@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import SectionContainer from "@/app/components/layout/SectionContainer";
 import VideoPlayer from "@/app/components/common/VideoPlayer";
+import type { HomeTestimonialsSection } from "@/lib/services/home.types";
 
 const headerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -30,34 +31,18 @@ const cardVariants = {
   },
 };
 
-export default function TestimonialsCarouselSection() {
+export default function TestimonialsCarouselSection({ data }: { data?: HomeTestimonialsSection }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Testimonials with individual video props - Add more videos here!
-  // To add a new video: Just add a new object with video, quote, name, and role
-  // Example: { video: "/NewVideo.mp4", quote: "...", name: "...", role: "..." }
-  const testimonials = [
-    {
-      video: "/Shawn.mp4",
-      quote: "First Team feels like family",
-      name: "John D.",
-      role: "Over-the-Road Driver, 1 Years",
-    },
-    {
-      video: "/Shawn.mp4",
-      quote: "First Team feels like family",
-      name: "John D.",
-      role: "Over-the-Road Driver, 2 Years",
-    },{
-      video: "/Shawn.mp4",
-      quote: "First Team feels like family",
-      name: "John D.",
-      role: "Over-the-Road Driver, 3 Years",
-    },
-    
-   
-  ];
+  const testimonials = (data?.testimonials ?? []).filter(t => t.is_active).length > 0
+    ? data!.testimonials.filter(t => t.is_active).map(t => ({
+        video: t.video?.url ?? "/Shawn.mp4",
+        quote: t.text,
+        name: t.name,
+        role: t.position,
+      }))
+    : [ ];
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -123,14 +108,17 @@ export default function TestimonialsCarouselSection() {
         variants={headerVariants}
       >
         <div className="max-w-2xl">
+          {/* Badge */}
           <h2 className="text-primary font-bold tracking-wider uppercase text-sm mb-3">
-            Our Drivers
+            {data?.hook ?? "Our Drivers"}
           </h2>
+          {/* Heading */}
           <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white leading-tight">
-            What Our Drivers Say
+            {data?.title ?? "What Our Drivers Say"}
           </h1>
+          {/* Paragraph */}
           <p className="mt-4 text-slate-600 dark:text-slate-400 text-lg">
-            At First Team Trucking, we believe the best way to understand our company is to hear directly from the drivers who keep us moving.
+            {data?.description ?? "At First Team Trucking, we believe the best way to understand our company is to hear directly from the drivers who keep us moving."}
           </p>
         </div>
 
