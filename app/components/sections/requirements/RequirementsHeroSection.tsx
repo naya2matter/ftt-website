@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import SectionContainer from "@/app/components/layout/SectionContainer";
+import type { HomeNeedsSection } from "@/lib/services/home.types";
 
 const containerVariants = {
   hidden: { opacity: 0, scale: 1.3 },
@@ -70,7 +71,14 @@ const listItemVariants = {
   },
 };
 
-export default function RequirementsHeroSection() {
+const defaultItems = [
+  { text: "" },
+];
+
+const animDelay = (i: number) => 0.2 + i * 0.1;
+
+export default function RequirementsHeroSection({ data }: { data?: HomeNeedsSection }) {
+  const items = data?.items?.length ? data.items : defaultItems;
   return (
     <section className="relative w-full bg-[#E8E8E0] dark:bg-slate-900 py-12 sm:py-16 md:py-24">
       <SectionContainer size="xl" noPaddingY>
@@ -86,16 +94,18 @@ export default function RequirementsHeroSection() {
           variants={badgeVariants}
         >
           <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+          {/* Badge */}
           <span className="text-[10px] sm:text-xs font-bold text-primary tracking-widest uppercase">
-            Amazon Freight Partner
+            {data?.hook }
           </span>
         </motion.div>
+        {/* Heading */}
         <motion.h1
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4 sm:mb-6 uppercase text-slate-900 dark:text-white px-2"
           variants={titleVariants}
           style={{ transformPerspective: 1000 }}
         >
-          What You&apos;ll <span className="text-primary">Need</span>
+          {data?.title }
         </motion.h1>
         <motion.div
           className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-0"
@@ -114,66 +124,19 @@ export default function RequirementsHeroSection() {
           }}
         >
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-left">
-            <motion.li variants={listItemVariants} className="flex items-start gap-2">
-              <motion.span 
-                className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                initial={{ scale: 0, rotate: -180 }}
-                whileInView={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 200, damping: 10, delay: 0.2 }}
-                viewport={{ once: true }}
-              >check_circle</motion.span>
-              <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">Valid CDL Class A license</span>
-            </motion.li>
-            <motion.li variants={listItemVariants} className="flex items-start gap-2">
-              <motion.span 
-                className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                initial={{ scale: 0, rotate: -180 }}
-                whileInView={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 200, damping: 10, delay: 0.3 }}
-                viewport={{ once: true }}
-              >check_circle</motion.span>
-              <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">Clean MVR & background</span>
-            </motion.li>
-            <motion.li variants={listItemVariants} className="flex items-start gap-2">
-              <motion.span 
-                className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                initial={{ scale: 0, rotate: -180 }}
-                whileInView={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 200, damping: 10, delay: 0.4 }}
-                viewport={{ once: true }}
-              >check_circle</motion.span>
-              <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">Ability to pass a drug screen</span>
-            </motion.li>
-            <motion.li variants={listItemVariants} className="flex items-start gap-2">
-              <motion.span 
-                className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                initial={{ scale: 0, rotate: -180 }}
-                whileInView={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 200, damping: 10, delay: 0.5 }}
-                viewport={{ once: true }}
-              >check_circle</motion.span>
-              <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">English proficiency (verbal & written)</span>
-            </motion.li>
-            <motion.li variants={listItemVariants} className="flex items-start gap-2">
-              <motion.span 
-                className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                initial={{ scale: 0, rotate: -180 }}
-                whileInView={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 200, damping: 10, delay: 0.6 }}
-                viewport={{ once: true }}
-              >check_circle</motion.span>
-              <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">Basic technical skills</span>
-            </motion.li>
-            <motion.li variants={listItemVariants} className="flex items-start gap-2">
-              <motion.span 
-                className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
-                initial={{ scale: 0, rotate: -180 }}
-                whileInView={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 200, damping: 10, delay: 0.7 }}
-                viewport={{ once: true }}
-              >check_circle</motion.span>
-              <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">Strong communication skills</span>
-            </motion.li>
+            {items.map((item, i) => (
+              <motion.li key={i} variants={listItemVariants} className="flex items-start gap-2">
+                <motion.span
+                  className="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5 flex-shrink-0"
+                  initial={{ scale: 0, rotate: -180 }}
+                  whileInView={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 10, delay: animDelay(i) }}
+                  viewport={{ once: true }}
+                >check_circle</motion.span>
+                {/* List Item Text */}
+                <span className="text-sm sm:text-base md:text-lg text-slate-700 dark:text-slate-300">{item.text}</span>
+              </motion.li>
+            ))}
           </ul>
         </motion.div>
       </motion.div>

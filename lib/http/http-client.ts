@@ -1,10 +1,12 @@
+"use client";
+
 import axios, {
-  AxiosError,
   AxiosInstance,
+  AxiosError,
   AxiosRequestConfig,
   AxiosResponse,
 } from "axios";
-import { HttpError } from "@/lib/http/errors";
+import { HttpError } from "./errors";
 
 export type HttpClientOptions = {
   baseUrl: string;
@@ -18,63 +20,129 @@ export class HttpClient {
   constructor(private opts: HttpClientOptions) {
     this.client = axios.create({
       baseURL: opts.baseUrl,
-      timeout: opts.timeoutMs ?? 30_000,
+      timeout: opts.timeoutMs ?? 3000000,
       headers: {
-        "Content-Type": "application/json",
+        Accept: "application/json",
       },
-      // withCredentials: true, // enable if your CMS uses cookie-based auth
     });
 
-    // Request interceptor: attach token
+    // Attach Bearer token automatically
     this.client.interceptors.request.use((config) => {
       const token = this.opts.getToken?.();
-      if (token) {
+      const isLogin = config.url?.includes("/login");
+
+      if (token && !isLogin) {
         config.headers = config.headers ?? {};
         config.headers.Authorization = `Bearer ${token}`;
       }
+
+      // For FormData requests, remove Content-Type so axios sets it
+      // automatically with the correct multipart/form-data boundary.
+      // For all other (JSON) requests, set Content-Type explicitly.
+      if (config.data instanceof FormData) {
+        delete config.headers["Content-Type"];
+      } else {
+        config.headers["Content-Type"] = "application/json";
+      }
+
       return config;
     });
 
-    // Response interceptor: normalize errors
+    // Standardized error handling
     this.client.interceptors.response.use(
       (res) => res,
       (error: AxiosError) => {
-        // Axios error may not have response (network / CORS / timeout)
         const status = error.response?.status ?? 0;
         const details = error.response?.data ?? {
           message: error.message,
-          code: error.code,
         };
 
-        // Best-effort path for debugging (like your fetch version)
-        const path =
-          (error.config?.url ?? "").toString() ||
-          (error.config?.baseURL ?? "").toString() ||
-          "unknown";
-
-        throw new HttpError(`HTTP ${status || "ERR"} for ${path}`, status, details);
+        throw new HttpError(
+          `HTTP ${status || "ERR"} for ${error.config?.url}`,
+          status,
+          details
+        );
       }
     );
   }
 
-  private async request<T>(config: AxiosRequestConfig): Promise<T> {
+  private async request<T>(
+    config: AxiosRequestConfig
+  ): Promise<T> {
+    // log method/url for easier debugging when requests fail
+    try {
+      // eslint-disable-next-line no-console
+      console.debug("HTTP ->", config.method?.toString().toUpperCase(), config.url);
+    } catch {}
+
     const res: AxiosResponse<T> = await this.client.request<T>(config);
     return res.data;
   }
 
+  // Expose a raw request method for cases where precise control is needed
+  requestRaw<T>(config: AxiosRequestConfig): Promise<T> {
+    return this.request<T>(config);
+  }
+
+  login<T = any>(payload: {
+    email: string;
+    password: string;
+  }): Promise<T> {
+    const formData = new FormData();
+    formData.append("email", payload.email);
+    formData.append("password", payload.password);
+
+    return this.request<T>({
+      url: "/login",
+      method: "POST",
+      data: formData,
+      headers: { Accept: "application/json" },
+    });
+  }
+
+  logout<T = any>(): Promise<T> {
+    return this.post<T>("/logout", {});
+  }
+
   get<T>(path: string, config?: AxiosRequestConfig) {
-    return this.request<T>({ ...config, url: path, method: "GET" });
+    return this.request<T>({
+      ...config,
+      url: path,
+      method: "GET",
+    });
   }
 
-  post<T>(path: string, payload?: unknown, config?: AxiosRequestConfig) {
-    return this.request<T>({ ...config, url: path, method: "POST", data: payload });
+  post<T>(
+    path: string,
+    payload?: unknown,
+    config?: AxiosRequestConfig
+  ) {
+    return this.request<T>({
+      ...config,
+      url: path,
+      method: "POST",
+      data: payload,
+    });
   }
 
-  put<T>(path: string, payload?: unknown, config?: AxiosRequestConfig) {
-    return this.request<T>({ ...config, url: path, method: "PUT", data: payload });
+  put<T>(
+    path: string,
+    payload?: unknown,
+    config?: AxiosRequestConfig
+  ) {
+    return this.request<T>({
+      ...config,
+      url: path,
+      method: "POST",
+      data: payload,
+    });
   }
 
   delete<T>(path: string, config?: AxiosRequestConfig) {
-    return this.request<T>({ ...config, url: path, method: "DELETE" });
+    return this.request<T>({
+      ...config,
+      url: path,
+      method: "DELETE",
+    });
   }
 }

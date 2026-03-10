@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import SectionContainer from "@/app/components/layout/SectionContainer";
+import type { HomeCTA } from "@/lib/services/home.types";
 
 const ctaVariants = {
   hidden: { opacity: 0, scale: 0.98 },
@@ -15,7 +16,7 @@ const ctaVariants = {
   },
 };
 
-export default function TestimonialsCTASection() {
+export default function TestimonialsCTASection({ cta }: { cta?: HomeCTA }) {
   return (
     <section className="relative w-full bg-[#E8E8E0] dark:bg-slate-900 pb-4 ">
       <SectionContainer size="xl" noPaddingY>
@@ -27,19 +28,20 @@ export default function TestimonialsCTASection() {
         variants={ctaVariants}
       >
       <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-6">
-        Ready to Join the Team?
+        {cta?.title ?? "Ready to Join the Team?"}
       </h2>
       <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto mb-10 text-lg">
-        Experience the First Team Trucking difference today. Competitive pay,
-        modern equipment, and a culture that cares.
+        {cta?.description ?? "Experience the First Team Trucking difference today. Competitive pay, modern equipment, and a culture that cares."}
       </p>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
         <button className="w-full sm:w-auto px-8 py-4 bg-primary text-white font-bold rounded-lg hover:bg-red-700 transition-colors shadow-lg shadow-primary/20">
-          Apply Now
+          {cta?.button1_text ?? "Apply Now"}
         </button>
-        <button className="w-full sm:w-auto px-8 py-4  bg-slate-100 hover:bg-slate-200 text-slate-900 dark:bg-white dark:hover:bg-gray-100 dark:text-black font-bold rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
-          Contact with Us
-        </button>
+        {(cta?.button2_text ?? "Contact with Us") && (
+          <button className="w-full sm:w-auto px-8 py-4  bg-slate-100 hover:bg-slate-200 text-slate-900 dark:bg-white dark:hover:bg-gray-100 dark:text-black font-bold rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+            {cta?.button2_text ?? "Contact with Us"}
+          </button>
+        )}
       </div>
       </motion.div>
       </SectionContainer>
